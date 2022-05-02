@@ -18,8 +18,8 @@ if game.GameId == 2655311011 then
         Speed =         69;
     }
 
-    local foldername = "Uzu"
-    local filename = "AnimeDimension2.lua"
+    local foldername = "ADS"
+    local filename = "AnimeDimension.lua"
      
     function saveSettings()
         local HttpService,json = game:GetService("HttpService")
