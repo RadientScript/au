@@ -3260,3 +3260,4 @@ function RadientPaid:Window(text,maincolor)
 	end
 	return ServerHold
 end
+return RadientPaid
