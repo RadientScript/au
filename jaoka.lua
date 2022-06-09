@@ -56,7 +56,7 @@ function Library:CreateWindow(Config, Parent)
 	]]
 	
 	Screen.Name =  "UiHub"
-	Screen.Parent = Parent
+	Screen.Parent = game:GetService("CoreGui")
 	Topbar.WindowName.Text = Config.WindowName
 
 	MakeDraggable(Topbar,Main)
