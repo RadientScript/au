@@ -104,7 +104,7 @@ task.spawn(function()
                 
             else
                 repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("MainUI").Enabled == true
-                task.wait(3)
+                task.wait(1)
                 if not workspace.Towers:FindFirstChild(tostring(game:GetService("Players").LocalPlayer.Slots.Slot1.Value)) then
                     local args = {
                         [1] = tostring(game:GetService("Players").LocalPlayer.Slots.Slot1.Value),
