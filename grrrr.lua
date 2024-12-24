@@ -75,8 +75,8 @@ task.spawn(function()
 
             if Lobby then
 
-                RerollAmount = tonumber(game:GetService("Players").LocalPlayer.Rerolls.Value)
-                writefile(tostring(game:GetService("Players").LocalPlayer)..".json", RerollAmount)
+                local RerollAmount = tonumber(game:GetService("Players").LocalPlayer.Rerolls.Value)
+                writefile(tostring(game:GetService("Players").LocalPlayer) .. ".txt", tostring(RerollAmount))
                 
                 repeat task.wait(0.5)
                     for i = 1, 2 do
@@ -101,6 +101,7 @@ task.spawn(function()
                         end)
                     end
                 until InGame == true
+                
             else
                 repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("MainUI").Enabled == true
                 task.wait(3)
@@ -114,7 +115,7 @@ task.spawn(function()
                 end
 
                 if game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("EndGameUI") or game:GetService("ReplicatedStorage").GameEnded.Value == true then
-                    local rerolldata = readfile(tostring(game:GetService("Players").LocalPlayer)..".json")
+                    local rerolldata = readfile(tostring(game:GetService("Players").LocalPlayer) .. ".txt")
                     if game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.Result.Text ~= "Defeat" then
                         for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Rewards.Holder:GetChildren()) do
                             if v.ClassName == "TextButton" then
