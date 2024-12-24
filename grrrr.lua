@@ -165,3 +165,14 @@ task.spawn(function()
         end)
     end
 end)
+
+--Auto Reconnect
+repeat wait() until game.CoreGui:FindFirstChild('RobloxPromptGui')
+
+local lp,po,ts = game:GetService('Players').LocalPlayer,game.CoreGui.RobloxPromptGui.promptOverlay,game:GetService('TeleportService')
+
+po.ChildAdded:connect(function(x)
+    if x.Name == 'ErrorPrompt' then
+        repeat ts:Teleport(12886143095) task.wait(2) until false
+    end
+end)
