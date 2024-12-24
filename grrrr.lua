@@ -112,6 +112,7 @@ task.spawn(function()
                     }
                     
                     game:GetService("ReplicatedStorage").Remotes.PlaceTower:FireServer(unpack(args))
+                    task.wait(1)
                 end
 
                 if game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("EndGameUI") or game:GetService("ReplicatedStorage").GameEnded.Value == true then
