@@ -129,7 +129,7 @@ task.spawn(function()
                                         }
                                     },
                                     ["footer"] = {
-                                        ["text"] = "Elapsed Time : "..tostring(game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.ElapsedTime.Text)
+                                        ["text"] = tostring(game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.ElapsedTime.Text)
                                     }
                                 }
                                 SendMessageEMBED(url, embed)
@@ -149,7 +149,7 @@ task.spawn(function()
                                 }
                             },
                             ["footer"] = {
-                                ["text"] = "Elapsed Time : "..tostring(game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.ElapsedTime.Text)
+                                ["text"] = tostring(game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.ElapsedTime.Text)
                             }
                         }
                         SendMessageEMBED(url, embed)
