@@ -1,5 +1,4 @@
 getgenv().Level = 5
-getgenv().HardMode = true
 
 repeat task.wait() until game:IsLoaded()
 
@@ -7,172 +6,124 @@ local url = "https://discord.com/api/webhooks/1230899982165479455/Zx3pyf5_DuGB-F
 
 local joinTime = tick()
 
+-- ฟังก์ชันสำหรับคำนวณเวลาในเซิร์ฟเวอร์
 local function getTimeInServer()
-    local currentTime = tick()
-    local elapsedTime = currentTime - joinTime
-    local minutes = math.floor(elapsedTime / 60)
-    local seconds = math.floor(elapsedTime % 60)
-    return minutes, seconds
+    local elapsedTime = tick() - joinTime
+    return math.floor(elapsedTime / 60), math.floor(elapsedTime % 60)
 end
 
+-- ฟังก์ชันแปลงค่า
 local function convertToNumber(value)
-    local number, suffix = value:match("([%d%.]+)([kKmMbB]?)")  
+    local number, suffix = value:match("([%d%.]+)([kKmMbB]?)")
     number = tonumber(number)
-
-    if not suffix or suffix == "" then
-        return number
-    end
-
     if suffix:lower() == "k" then
-        number = number * 1000
+        return number * 1000
     elseif suffix:lower() == "m" then
-        number = number * 1000000
+        return number * 1000000
     elseif suffix:lower() == "b" then
-        number = number * 1000000000
+        return number * 1000000000
     end
-
     return number
 end
 
-function SendMessageEMBED(url, embed)
+-- ฟังก์ชันส่งข้อมูล Discord Webhook
+local function SendMessageEMBED(url, embed)
     local http = game:GetService("HttpService")
-    local headers = {
-        ["Content-Type"] = "application/json"
-    }
-    local data = {
-        ["embeds"] = {
-            {
-                ["title"] = embed.title,
-                ["description"] = embed.description,
-                ["color"] = embed.color,
-                ["fields"] = embed.fields,
-                ["footer"] = {
-                    ["text"] = embed.footer.text
-                }
-            }
-        }
-    }
-    local body = http:JSONEncode(data)
-    local response = request({
+    request({
         Url = url,
         Method = "POST",
-        Headers = headers,
-        Body = body
+        Headers = {["Content-Type"] = "application/json"},
+        Body = http:JSONEncode({embeds = {embed}})
     })
 end
 
-local RerollAmount;
-
 task.spawn(function()
     while task.wait() do
-        pcall(function()
+        local success, err = pcall(function()
+            local player = game:GetService("Players").LocalPlayer
+            local replicatedStorage = game:GetService("ReplicatedStorage")
+            local playerGui = player.PlayerGui
 
-            if (game.PlaceId == 12886143095 or game.PlaceId == 18583778121) then
-                Lobby = true
-            else
-                InGame = true
-            end
+            -- ตรวจสอบสถานะ Lobby หรือ InGame
+            local inLobby = game.PlaceId == 12886143095 or game.PlaceId == 18583778121
 
-            if Lobby then
-
+            if inLobby then
                 local RerollAmount = tonumber(game:GetService("Players").LocalPlayer.Rerolls.Value)
-                writefile(tostring(game:GetService("Players").LocalPlayer) .. ".txt", tostring(RerollAmount))
-                
-                repeat task.wait(0.5)
-                    for i = 1, 2 do
-                        task.delay(0, function()
-                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("InfiniteCastleManager"):FireServer("GetData")
-                        end)
-            
-                        task.delay(0.5, function()
-                            game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("InfiniteCastleManager"):FireServer("GetGlobalData")
-                        end)
+                writefile(player.Name .. ".txt", tostring(RerollAmount))
+                repeat
+                    task.wait(.5)
+                    for _ = 1, 2 do
+                        replicatedStorage.Remotes.InfiniteCastleManager:FireServer("GetData")
+                        task.wait(.5)
+                        replicatedStorage.Remotes.InfiniteCastleManager:FireServer("GetGlobalData")
                     end
-            
-                    for i = 1, 2 do
-                        task.delay(1, function()
-                        local args = {
-                            [1] = "Play",
-                            [2] = Level,
-                            [3] = HardMode
-                        }
-            
-                        game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("InfiniteCastleManager"):FireServer(unpack(args))
-                        end)
-                    end
-                until InGame == true
-                
+
+                    replicatedStorage.Remotes.InfiniteCastleManager:FireServer("Play", Level, true)
+                    task.wait(.5)
+                until not inLobby
             else
-                repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("MainUI").Enabled == true
-                task.wait(1)
-                if not workspace.Towers:FindFirstChild(tostring(game:GetService("Players").LocalPlayer.Slots.Slot1.Value)) then
-                    local args = {
-                        [1] = tostring(game:GetService("Players").LocalPlayer.Slots.Slot1.Value),
-                        [2] = CFrame.new(-168.2913818359375, 197.93942260742188, 16.62772560119629) * CFrame.Angles(-0, 0, -0)
-                    }
-                    
-                    game:GetService("ReplicatedStorage").Remotes.PlaceTower:FireServer(unpack(args))
+                local mainUI = playerGui:WaitForChild("MainUI")
+                local GameMode = replicatedStorage.Gamemode.Value
+                local MapName = workspace:WaitForChild("Map").MapName.Value
+                local MapDifficulty = workspace:WaitForChild("Map").MapDifficulty.Value
+                local WaveGame = replicatedStorage.Wave.Value
+
+                repeat task.wait() until mainUI.Enabled
+
+                -- วาง Tower ถ้าไม่มีอยู่ในเกม
+                if not workspace.Towers:FindFirstChild(player.Slots.Slot1.Value) and (game:GetService("Players").LocalPlayer.Cash.Value >= convertToNumber(game:GetService("Players").LocalPlayer.PlayerGui.MainUI.SlotsBG.Slots.Slot1.Cost.Text)) then
+                    replicatedStorage.Remotes.PlaceTower:FireServer(tostring(player.Slots.Slot1.Value),CFrame.new(-168.2913818359375, 197.93942260742188, 16.62772560119629))
                     task.wait(1)
                 end
 
-                if game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("EndGameUI") or game:GetService("ReplicatedStorage").GameEnded.Value == true then
-                    local rerolldata = readfile(tostring(game:GetService("Players").LocalPlayer) .. ".txt")
-                    if game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.Result.Text ~= "Defeat" then
-                        for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Rewards.Holder:GetChildren()) do
-                            if v.ClassName == "TextButton" then
-                                local embed = {
-                                    ["title"] = "Reroll Farm",
-                                    ["color"] = 65280,
-                                    ["fields"] = {
-                                        {
-                                            ["name"] = "||"..tostring(game:GetService("Players").LocalPlayer).."||",
-                                            ["value"] = "+"..tostring(v.ItemName.Text).." "..tostring(v.Amount.Text:gsub("x", "")).." (".."Total : "..(rerolldata + v.Amount.Text:gsub("x", ""))..")".."\n"
-                                        }
-                                    },
-                                    ["footer"] = {
-                                        ["text"] = tostring(game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.ElapsedTime.Text)
-                                    }
-                                }
-                                SendMessageEMBED(url, embed)
-                                task.wait(.5)
-                                game:GetService("TeleportService"):Teleport(12886143095, game:GetService("Players").LocalPlayer)
-                                task.wait(3)
-                            end
+                -- ตรวจสอบ EndGame
+                local endGameUI = playerGui:FindFirstChild("EndGameUI")
+                if endGameUI or replicatedStorage.GameEnded.Value then
+                    local rerollData = tonumber(readfile(player.Name .. ".txt"))
+                
+                    -- เก็บข้อมูลทั้งหมดไว้ในข้อความเดียว
+                    local rewardsText = ""
+                    for _, reward in ipairs(endGameUI.BG.Container.Rewards.Holder:GetChildren()) do
+                        if reward:IsA("TextButton") then
+                            local amount = tonumber(reward.Amount.Text:match("%d+"))
+                            rewardsText = "+ "..rewardsText .. reward.ItemName.Text .." ".. amount .." (Total: " .. (rerollData + amount) .. ")\n"
                         end
-                    else
+                    end
+                
+                    if rewardsText ~= "" then
                         local embed = {
-                            ["title"] = "Reroll Farm",
-                            ["color"] = 16711680,
-                            ["fields"] = {
-                                {
-                                    ["name"] = "||"..tostring(game:GetService("Players").LocalPlayer).."||",
-                                    ["value"] = "Defeat"
-                                }
-                            },
-                            ["footer"] = {
-                                ["text"] = tostring(game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.ElapsedTime.Text)
-                            }
+                            title = "Reroll Farm",
+                            color = 65280,
+                            fields = {{
+                                name = "||" .. player.Name .. "||",
+                                value = rewardsText
+                            }},
+                            footer = {text = endGameUI.BG.Container.Stats.ElapsedTime.Text.." -  Wave "..tostring(WaveGame).." \n"..tostring(GameMode).." "..tostring(MapName).." ["..tostring(MapDifficulty).."]"}
                         }
                         SendMessageEMBED(url, embed)
                         task.wait(.5)
-                        game:GetService("TeleportService"):Teleport(12886143095, game:GetService("Players").LocalPlayer)
+                        game:GetService("TeleportService"):Teleport(12886143095, player)
                         task.wait(3)
+                        return
                     end
-                end
-
+                
+                end         
             end
-
         end)
+
+        if not success then
+            warn("Error occurred: " .. tostring(err))
+        end
     end
 end)
 
---Auto Reconnect
-repeat wait() until game.CoreGui:FindFirstChild('RobloxPromptGui')
-
-local lp,po,ts = game:GetService('Players').LocalPlayer,game.CoreGui.RobloxPromptGui.promptOverlay,game:GetService('TeleportService')
-
-po.ChildAdded:connect(function(x)
-    if x.Name == 'ErrorPrompt' then
-        repeat ts:Teleport(12886143095) task.wait(2) until false
+-- Auto Reconnect
+repeat task.wait() until game.CoreGui:FindFirstChild("RobloxPromptGui")
+game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+    if child.Name == "ErrorPrompt" then
+        repeat
+            game:GetService("TeleportService"):Teleport(12886143095)
+            task.wait(2)
+        until false
     end
 end)
