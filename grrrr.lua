@@ -98,7 +98,10 @@ task.spawn(function()
                                 name = "||" .. player.Name .. "||",
                                 value = rewardsText
                             }},
-                            footer = {text = endGameUI.BG.Container.Stats.ElapsedTime.Text.." -  Wave "..tostring(WaveGame).." \n"..tostring(GameMode).." "..tostring(MapName).." ["..tostring(MapDifficulty).."]"}
+                            thumbnail = {
+                                url = "https://cdn.discordapp.com/attachments/1287980533162315808/1321789124470116383/latest.png?ex=676e838c&is=676d320c&hm=be9b5f0f61f2165f1e9fe8d656d445afe0892c430666d2555fb3bd43e73b7692&" -- ใส่ลิงก์รูปภาพเล็ก
+                            },
+                            footer = {text = endGameUI.BG.Container.Stats.ElapsedTime.Text.." -  Wave "..tostring(WaveGame).." \n"..tostring(GameMode).." "..tostring(MapName).." ["..tostring(MapDifficulty).."]",icon_url = "https://cdn.discordapp.com/attachments/1287980533162315808/1321790161289482311/DALLE_2024-12-26_17.41.55_-_An_anime-inspired_Last_Stand_scene_set_on_a_peaceful_Roblox_farm._The_scene_features_a_serene_sunset_over_rolling_fields_with_a_lone_character_stand.webp?ex=676e8484&is=676d3304&hm=8e090df63bdf09f3ca07395a6728d8b6cf260ea3cd57f4356436fb781ae8d85b&"}
                         }
                         SendMessageEMBED(url, embed)
                         task.wait(.5)
