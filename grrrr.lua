@@ -4,14 +4,6 @@ repeat task.wait() until game:IsLoaded()
 
 local url = "https://discord.com/api/webhooks/1230899982165479455/Zx3pyf5_DuGB-FvftwuyTs1f4F16G9mby0hHEKbkUPFBwMIxV14mQp4Nwhvtzuj2LCQK"
 
-local joinTime = tick()
-
--- ฟังก์ชันสำหรับคำนวณเวลาในเซิร์ฟเวอร์
-local function getTimeInServer()
-    local elapsedTime = tick() - joinTime
-    return math.floor(elapsedTime / 60), math.floor(elapsedTime % 60)
-end
-
 local function GetLocalTime()
     local dateTime = DateTime.now():ToLocalTime()
     local timeString = string.format("%02d:%02d:%02d", dateTime.Hour, dateTime.Minute, dateTime.Second)
@@ -26,20 +18,34 @@ local playerGui = player.PlayerGui
 --save all item
 local dataitem = {}
 
-if inLobby then
-    repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Items")
-    for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Items.BG.Items:GetChildren()) do
-        if v.ClassName == "TextButton" then
-            table.insert(dataitem, "Item: "..v.Name .. " Amount: " .. v.Amount.Text:gsub(",",""):gsub("x",""))
+local startTime = tick()
+
+task.spawn(function()
+    while task.wait(1) do
+
+        --check time server
+        local elapsedTime = tick() - startTime
+
+        if elapsedTime >= 120 and inLobby then
+            game:Shutdown() 
+            break
         end
+
+        --item
+        for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("Items").BG.Items:GetChildren()) do
+            if v.ClassName == "TextButton" then
+                table.insert(dataitem, "Item: "..v.Name .. " Amount: " .. v.Amount.Text:gsub(",",""):gsub("x",""))
+            end
+        end
+    
+        -- รวมข้อความทั้งหมดในตารางโดยใช้ \n เพื่อเว้นบรรทัด
+        local content = table.concat(dataitem, "\n")
+    
+        -- เขียนข้อความทั้งหมดลงในไฟล์
+        writefile(player.Name.."_item" .. ".txt", content)
+
     end
-
-    -- รวมข้อความทั้งหมดในตารางโดยใช้ \n เพื่อเว้นบรรทัด
-    local content = table.concat(dataitem, "\n")
-
-    -- เขียนข้อความทั้งหมดลงในไฟล์
-    writefile(player.Name.."_item" .. ".txt", content)
-end
+end)
 
 -- ฟังก์ชันแปลงค่า
 local function convertToNumber(value)
