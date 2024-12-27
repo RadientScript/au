@@ -65,8 +65,9 @@ task.spawn(function()
             -- ตรวจสอบสถานะ Lobby หรือ InGame
 
             if inLobby then
+                local LevelXp = tostring(game:GetService("Players").LocalPlayer.PlayerGui.Bar.Main.Bar.Text.Text)
                 local RerollAmount = tonumber(game:GetService("Players").LocalPlayer.Rerolls.Value)
-                writefile(player.Name .. ".txt", tostring(RerollAmount))
+                writefile(player.Name .. ".txt", "Reroll Amount: "..tostring(RerollAmount).."\n"..LevelXp)
                 repeat
                     task.wait(.5)
                     for _ = 1, 2 do
@@ -96,25 +97,48 @@ task.spawn(function()
                 -- ตรวจสอบ EndGame
                 local endGameUI = playerGui:FindFirstChild("EndGameUI")
                 if endGameUI or replicatedStorage.GameEnded.Value then
-                    local rerollData = tonumber(readfile(player.Name .. ".txt"))
-                
+                    local rerollData = tonumber(readfile(player.Name .. ".txt"):match("Reroll Amount:%s*(%d+)"))
+                    local level = tonumber(readfile(player.Name .. ".txt"):match("Level%s*(%d+)"))
+                    local xp, maxXP = readfile(player.Name .. ".txt"):match("%((%d+)/(%d+)%)")
+                    local formattedLevel = string.format("Level %d (%d/%d)", level, xp, maxXP)
+
                     -- เก็บข้อมูลทั้งหมดไว้ในข้อความเดียว
                     local rewardsText = ""
                     for _, reward in ipairs(endGameUI.BG.Container.Rewards.Holder:GetChildren()) do
                         if reward:IsA("TextButton") then
                             local amount = tonumber(reward.Amount.Text:match("%d+"))
-                            rewardsText = "+ "..rewardsText .. reward.ItemName.Text .." ".. amount .." (Total: " .. (rerollData + amount) .. ")\n"
+                            rewardsText = "+ "..rewardsText .. reward.ItemName.Text:gsub("Technique Shard","Rerolls") .." ".. amount .." (Total: " .. (rerollData + amount) .. ")\n"
                         end
                     end
-                
+                    local UnitText = ""
+                    for i, v in pairs(game:GetService("Players").LocalPlayer.Slots:GetChildren()) do
+                        if string.match(v.Name, "^Slot%d+$") then
+                            if v.Value ~= "" then
+                                UnitText = UnitText .. "["..v.Level.Value.."] "..v.Value.."\n"
+                            end
+                        end
+                    end
+                    
                     if rewardsText ~= "" then
                         local embed = {
                             title = "Reroll Farm",
                             color = 65280,
-                            fields = {{
-                                name = "||" .. player.Name .. "||",
-                                value = rewardsText
-                            }},
+                            fields = {
+                                { 
+                                    name = "", 
+                                    value = "User : ".."||" .. player.Name .. "||".."\n"..formattedLevel
+                                },
+                                { 
+                                    name = "Units", 
+                                    value = UnitText, 
+                                    inline = true 
+                                },
+                                { 
+                                    name = "Reward",
+                                    value = rewardsText,
+                                    inline = true
+                                }
+                            },
                             thumbnail = {
                                 url = "https://cdn.discordapp.com/attachments/1287980533162315808/1321789124470116383/latest.png?ex=676e838c&is=676d320c&hm=be9b5f0f61f2165f1e9fe8d656d445afe0892c430666d2555fb3bd43e73b7692&" -- ใส่ลิงก์รูปภาพเล็ก
                             },
@@ -151,7 +175,7 @@ game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
             end
         end
 
-        if errorTextLabel then
+        if errorPrompt then
             local embed = {
                 title = "Disconnect From Server",
                 color = 00000,
