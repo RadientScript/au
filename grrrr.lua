@@ -27,9 +27,10 @@ local playerGui = player.PlayerGui
 local dataitem = {}
 
 if inLobby then
+    repeat task.wait() until game:GetService("Players").LocalPlayer.PlayerGui:FindFirstChild("Items")
     for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Items.BG.Items:GetChildren()) do
         if v.ClassName == "TextButton" then
-            table.insert(dataitem, v.Name .. " " .. v.Amount.Text:gsub(",",""):gsub("x",""))
+            table.insert(dataitem, "Item: "..v.Name .. " Amount: " .. v.Amount.Text:gsub(",",""):gsub("x",""))
         end
     end
 
@@ -76,7 +77,7 @@ task.spawn(function()
                 local RerollAmount = tonumber(game:GetService("Players").LocalPlayer.Rerolls.Value)
                 writefile(player.Name .. ".txt", "Reroll Amount: "..tostring(RerollAmount).."\n"..LevelXp)
                 repeat
-                    task.wait(.5)
+
                     for _ = 1, 2 do
                         replicatedStorage.Remotes.InfiniteCastleManager:FireServer("GetData")
                         task.wait(.5)
@@ -85,6 +86,7 @@ task.spawn(function()
 
                     replicatedStorage.Remotes.InfiniteCastleManager:FireServer("Play", Level, true)
                     task.wait(.5)
+                    
                 until not inLobby
             else
                 local mainUI = playerGui:WaitForChild("MainUI")
