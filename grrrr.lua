@@ -55,6 +55,14 @@ local function convertToNumber(value)
     return number
 end
 
+local function AddComma(value)
+    local formatted = tostring(value):reverse():gsub("(%d%d%d)", "%1,"):reverse()
+    if formatted:sub(1, 1) == "," then
+        formatted = formatted:sub(2)
+    end
+    return formatted
+end
+
 -- ฟังก์ชันส่งข้อมูล Discord Webhook
 local function SendMessageEMBED(url, embed)
     local http = game:GetService("HttpService")
@@ -86,7 +94,7 @@ task.spawn(function()
 
                     replicatedStorage.Remotes.InfiniteCastleManager:FireServer("Play", Level, true)
                     task.wait(.5)
-                    
+
                 until not inLobby
             else
                 local mainUI = playerGui:WaitForChild("MainUI")
@@ -109,7 +117,7 @@ task.spawn(function()
                     local rerollData = tonumber(readfile(player.Name .. ".txt"):match("Reroll Amount:%s*(%d+)"))
                     local level = tonumber(readfile(player.Name .. ".txt"):match("Level%s*(%d+)"))
                     local xp, maxXP = readfile(player.Name .. ".txt"):match("%((%d+)/(%d+)%)")
-                    local formattedLevel = string.format("Level %d [%d/%d]", level, xp, maxXP)
+                    local formattedLevel = string.format("Level %d [%d/%d]", level, AddComma(xp), AddComma(maxXP))
 
                     -- เก็บข้อมูลทั้งหมดไว้ในข้อความเดียว
                     local rewardsText = ""
