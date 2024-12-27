@@ -117,7 +117,8 @@ task.spawn(function()
                     local rerollData = tonumber(readfile(player.Name .. ".txt"):match("Reroll Amount:%s*(%d+)"))
                     local level = tonumber(readfile(player.Name .. ".txt"):match("Level%s*(%d+)"))
                     local xp, maxXP = readfile(player.Name .. ".txt"):match("%((%d+)/(%d+)%)")
-                    local formattedLevel = string.format("Level %d [%d/%d]", level, xp, maxXP)
+                    local formattedXP = AddComma(xp) local formattedMaxXP = AddComma(maxXP)
+                    local formattedLevel = string.format("Level %d [%d/%d]", level, formattedXP, formattedMaxXP)
 
                     -- เก็บข้อมูลทั้งหมดไว้ในข้อความเดียว
                     local rewardsText = ""
