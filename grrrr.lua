@@ -12,6 +12,28 @@ local function getTimeInServer()
     return math.floor(elapsedTime / 60), math.floor(elapsedTime % 60)
 end
 
+local inLobby = game.PlaceId == 12886143095 or game.PlaceId == 18583778121
+local player = game:GetService("Players").LocalPlayer
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local playerGui = player.PlayerGui
+
+--save all item
+local dataitem = {}
+
+if inLobby then
+    for i, v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Items.BG.Items:GetChildren()) do
+        if v.ClassName == "TextButton" then
+            table.insert(dataitem, v.Name .. " " .. v.Amount.Text:gsub(",",""):gsub("x",""))
+        end
+    end
+
+    -- รวมข้อความทั้งหมดในตารางโดยใช้ \n เพื่อเว้นบรรทัด
+    local content = table.concat(dataitem, "\n")
+
+    -- เขียนข้อความทั้งหมดลงในไฟล์
+    writefile(player.Name.."_item" .. ".txt", content)
+end
+
 -- ฟังก์ชันแปลงค่า
 local function convertToNumber(value)
     local number, suffix = value:match("([%d%.]+)([kKmMbB]?)")
@@ -40,12 +62,7 @@ end
 task.spawn(function()
     while task.wait() do
         local success, err = pcall(function()
-            local player = game:GetService("Players").LocalPlayer
-            local replicatedStorage = game:GetService("ReplicatedStorage")
-            local playerGui = player.PlayerGui
-
             -- ตรวจสอบสถานะ Lobby หรือ InGame
-            local inLobby = game.PlaceId == 12886143095 or game.PlaceId == 18583778121
 
             if inLobby then
                 local RerollAmount = tonumber(game:GetService("Players").LocalPlayer.Rerolls.Value)
@@ -122,11 +139,34 @@ end)
 
 -- Auto Reconnect
 repeat task.wait() until game.CoreGui:FindFirstChild("RobloxPromptGui")
+local ErrorCode = ""
 game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
     if child.Name == "ErrorPrompt" then
-        repeat
-            game:GetService("TeleportService"):Teleport(12886143095)
-            task.wait(2)
-        until false
+        task.wait(.5)
+
+        local errorPrompt = game.CoreGui.RobloxPromptGui.promptOverlay:WaitForChild("ErrorPrompt").MessageArea.ErrorFrame
+        for _, v in ipairs(errorPrompt:GetChildren()) do
+            if v.ClassName == "TextLabel" then
+                ErrorCode = v.Text
+            end
+        end
+
+        if errorTextLabel then
+            local embed = {
+                title = "Disconnect From Server",
+                color = 00000,
+                fields = {{
+                    name = "||" .. player.Name .. "||",
+                    value = ErrorCode
+                }},
+                footer = {text = "Rejoining"}
+            }
+            SendMessageEMBED(url, embed)
+        else
+            print("ErrorPrompt not found.")
+        end
+
+        repeat game:GetService("TeleportService"):Teleport(12886143095, player) task.wait(2) until false
+
     end
 end)
