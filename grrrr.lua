@@ -1,1 +1,307 @@
-getgenv().Level=0;repeat task.wait()until game:IsLoaded()local a="https://discord.com/api/webhooks/1230899982165479455/Zx3pyf5_DuGB-FvftwuyTs1f4F16G9mby0hHEKbkUPFBwMIxV14mQp4Nwhvtzuj2LCQK"local function b()local c=DateTime.now():ToLocalTime()local d=string.format("%02d:%02d:%02d",c.Hour,c.Minute,c.Second)return d end;local e=game.PlaceId==12886143095 or game.PlaceId==18583778121;local f=game:GetService("Players").LocalPlayer;local g=game:GetService("ReplicatedStorage")local h=f.PlayerGui;local i=0;local j=false;local k={}local l=tick()local function m()local n=tick()-l;local o=math.floor(n/3600)local p=math.floor(n%3600/60)local q=math.floor(n%60)return string.format("%02d:%02d:%02d",o,p,q)end;task.spawn(function()while task.wait(1)do local n=tick()-l;if n>=120 and e then game:Shutdown()break end end end)local function r(s)local t,u=s:match("([%d%.]+)([kKmMbB]?)")t=tonumber(t)if u:lower()=="k"then return t*1000 elseif u:lower()=="m"then return t*1000000 elseif u:lower()=="b"then return t*1000000000 end;return t end;local function v(s)local w=tostring(s):reverse():gsub("(%d%d%d)","%1,"):reverse()if w:sub(1,1)==","then w=w:sub(2)end;return w end;local function x(a,y)local z=game:GetService("HttpService")request({Url=a,Method="POST",Headers={["Content-Type"]="application/json"},Body=z:JSONEncode({embeds={y}})})end;task.spawn(function()while task.wait()do local A,B=pcall(function()local C=game:GetService("HttpService")local D=b()if e then repeat for E=1,2 do g.Remotes.InfiniteCastleManager:FireServer("GetData")task.wait(.5)g.Remotes.InfiniteCastleManager:FireServer("GetGlobalData")end;g.Remotes.InfiniteCastleManager:FireServer("Play",Level,true)task.wait(.5)until not e else local F=h:WaitForChild("MainUI")repeat task.wait()until F.Enabled;local G={}for H,I in pairs(game:GetService("Players").LocalPlayer.PlayerGui.MainUI.SlotsBG.Slots:GetChildren())do if I.ClassName=="TextButton"then if I:GetAttribute("Unit")then i=i+1;table.insert(G,{SlotValue=I:GetAttribute("Unit"),Cost=r(I.Cost.Text)})end end end;table.sort(G,function(J,K)return J.Cost<K.Cost end)local L,M=-159.369140625,7.469295501708984;repeat task.wait()local N=false;for E,O in ipairs(G)do local P=CFrame.new(L,197.93942260742188,M)if not workspace.Towers:FindFirstChild(tostring(O.SlotValue))and tonumber(game:GetService("Players").LocalPlayer.Cash.Value)>=tonumber(O.Cost)then repeat task.wait()g.Remotes.PlaceTower:FireServer(tostring(O.SlotValue),P)print("Placed Unit :",O.SlotValue,"at",P)task.wait(1)until workspace.Towers:FindFirstChild(tostring(O.SlotValue))L=L-4 end end;if#workspace.Towers:GetChildren()>=i then N=true elseif#workspace.Towers:GetChildren()<i then N=false end;j=N until j==true or h:FindFirstChild("EndGameUI")print("All Place!")repeat task.wait()until h:FindFirstChild("EndGameUI")local Q=h:FindFirstChild("EndGameUI")if Q or g.GameEnded.Value then local R=game:GetService("ReplicatedStorage").Remotes.GetTeleportData:InvokeServer()local S=""local T=game:GetService("ReplicatedStorage").Remotes.GetPlayerData:InvokeServer()local U=T.ItemData;local V,W=nil;local X=v(tonumber(C:JSONEncode(T.Level)))local Y=v(tonumber(C:JSONEncode(T.EXP)))local Z=v(tonumber(C:JSONEncode(T.MaxEXP)))local _=tonumber(C:JSONEncode(T.Rerolls))local a0=v(tonumber(C:JSONEncode(T.Jewels)))local a1=v(tonumber(C:JSONEncode(T.Emeralds)))local a2=v(tonumber(C:JSONEncode(T.Gold)))local a3=v(tonumber(C:JSONEncode(T.Rerolls)))local a4=""local a5=""local a6=""local a7=""for E,a8 in ipairs(Q.BG.Container.Rewards.Holder:GetChildren())do if a8:IsA("TextButton")then local a9=tonumber(a8.Amount.Text:match("%d+"))or 0;for E,aa in pairs(U)do if string.lower(a8.ItemName.Text)==string.lower(aa.ItemName)then a4=a4 .."+"..a9 .." "..a8.ItemName.Text.." [Total: "..tonumber(aa.Amount).."]\n"end end;if a8.ItemName.Text=="Technique Shard"then a5=a5 .."+"..a9 .." "..a8.ItemName.Text:gsub("Technique Shard","Rerolls").." [ Total: "..a3 .." ]\n"end;if a5==""then a7=a4 else a7=a5 ..a4 end end end;local ab=""for ac,ad in pairs(T.Slots)do local ae=ad.Kills or 0;local X=ad.Level or 1;local s=ad.Value or""local af=ad.Cash or 0;if s~=""then ab=ab..string.format("[ %d ] %s = %s :crossed_swords:\n",X,s,v(tonumber(ae)))end end;if R.Room~=nil then S=" Room "..C:JSONEncode(R.Room)elseif R.MapNum~=nil then S=" Act "..C:JSONEncode(R.MapNum)elseif R.Element~=nil then S=" Element "..C:JSONEncode(R.Element)else S=""end;ColorWL=00000;WinLoss=""if game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.Result.TextColor3==Color3.new(153/255,255/255,75/255)then ColorWL=65280;WinLoss="VICTORY"else ColorWL=16711680;WinLoss="DEFEAT"end;local y={title="Reroll Farm",color=tonumber(ColorWL),fields={{name="",value="**User : **".."||"..f.Name.."||".."\n".."**Level: **"..X.." ["..Y.."/"..Z.."]"},{name="Player Stats",value="<:emerald:1204766658397343805> "..a1 .."\n<:als_jewels:1265957290251522089> "..a0 .."\n<:coinals:1322519939525120072> "..a2 .."\n<:rerolls:1216376860804382860> "..a3,inline=true},{name="",value="",inline=true},{name="Reward",value=a7,inline=true},{name="Units",value=ab},{name="Match Result",value=m().." -  Wave "..tostring(tonumber(game:GetService("ReplicatedStorage").Wave.Value)).." \n"..C:JSONEncode(R.Type):gsub('"',"").." "..C:JSONEncode(R.MapName):gsub('"',"")..S.." ["..C:JSONEncode(R.Difficulty):gsub('"',"").."] ".." - "..WinLoss}},thumbnail={url="https://cdn.discordapp.com/attachments/1287980533162315808/1321789124470116383/latest.png?ex=676e838c&is=676d320c&hm=be9b5f0f61f2165f1e9fe8d656d445afe0892c430666d2555fb3bd43e73b7692&"},footer={text="Local Time".." : "..D}}x(a,y)task.wait(.5)repeat game:GetService("TeleportService"):Teleport(12886143095,f)task.wait(.1)until e end end end)if not A then warn("Error occurred: "..tostring(B))end end end)repeat task.wait()until game.CoreGui:FindFirstChild("RobloxPromptGui")local ag=""game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(ah)if ah.Name=="ErrorPrompt"then task.wait(.5)local ai=game.CoreGui.RobloxPromptGui.promptOverlay:WaitForChild("ErrorPrompt").MessageArea.ErrorFrame;for E,I in ipairs(ai:GetChildren())do if I.ClassName=="TextLabel"then ag=I.Text end end;if ai then local y={title="Disconnect From Server",color=00000,fields={{name="||"..f.Name.."||",value=ag}},footer={text="Rejoining"}}x(a,y)else print("ErrorPrompt not found.")end;repeat game:GetService("TeleportService"):Teleport(12886143095,f)task.wait(2)until false end end)
+getgenv().Level = 0
+
+repeat task.wait() until game:IsLoaded()
+
+local url = "https://discord.com/api/webhooks/1230899982165479455/Zx3pyf5_DuGB-FvftwuyTs1f4F16G9mby0hHEKbkUPFBwMIxV14mQp4Nwhvtzuj2LCQK"
+
+local function GetLocalTime()
+    local dateTime = DateTime.now():ToLocalTime()
+    local timeString = string.format("%02d:%02d:%02d", dateTime.Hour, dateTime.Minute, dateTime.Second)
+    return timeString
+end
+
+local inLobby = game.PlaceId == 12886143095 or game.PlaceId == 18583778121
+local player = game:GetService("Players").LocalPlayer
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local playerGui = player.PlayerGui
+
+--save all item
+local dataitem = {}
+
+local startTime = tick()
+
+local function getSessionTime()
+    local elapsedTime = tick() - startTime
+    local hours = math.floor(elapsedTime / 3600)
+    local minutes = math.floor((elapsedTime % 3600) / 60)
+    local seconds = math.floor(elapsedTime % 60)
+    return string.format("%02d:%02d:%02d", hours, minutes, seconds)
+end
+
+task.spawn(function()
+    while task.wait(1) do
+
+        local elapsedTime = tick() - startTime
+
+        if elapsedTime >= 120 and inLobby then
+            game:Shutdown() 
+            break
+        end
+
+    end
+end)
+
+local function convertToNumber(value)
+    value = value:gsub(",", "")
+    
+    local number, suffix = value:match("([%d%.]+)([kKmMbB]?)")
+    number = tonumber(number)
+    
+    if suffix:lower() == "k" then
+        return number * 1000
+    elseif suffix:lower() == "m" then
+        return number * 1000000
+    elseif suffix:lower() == "b" then
+        return number * 1000000000
+    end
+    
+    return number
+end
+
+local function AddComma(value)
+    local formatted = tostring(value):reverse():gsub("(%d%d%d)", "%1,"):reverse()
+    if formatted:sub(1, 1) == "," then
+        formatted = formatted:sub(2)
+    end
+    return formatted
+end
+
+local function SendMessageEMBED(url, embed)
+    local http = game:GetService("HttpService")
+    request({
+        Url = url,
+        Method = "POST",
+        Headers = {["Content-Type"] = "application/json"},
+        Body = http:JSONEncode({embeds = {embed}})
+    })
+end
+
+task.spawn(function()
+    while task.wait() do
+        local success, err = pcall(function()
+
+            local HttpService = game:GetService("HttpService")
+            local currentTime = GetLocalTime()
+
+            if inLobby then
+                repeat
+                    for _ = 1, 2 do
+                        replicatedStorage.Remotes.InfiniteCastleManager:FireServer("GetData")
+                        task.wait(.5)
+                        replicatedStorage.Remotes.InfiniteCastleManager:FireServer("GetGlobalData")
+                    end
+
+                    replicatedStorage.Remotes.InfiniteCastleManager:FireServer("Play", Level, true)
+                    task.wait(.5)
+                until not inLobby
+            else
+                local mainUI = playerGui:WaitForChild("MainUI")
+
+                repeat task.wait() until mainUI.Enabled
+
+                local UnitTable = {}
+
+                for i,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Bottom.Frame:GetChildren()) do
+                    if v.Name == "Frame" then
+                        for i2,v2 in pairs(v:GetChildren()) do
+                            if v2.ClassName == "TextButton" and v2:FindFirstChild("Frame") and v2.Frame.Cost.Text ~= "empty" then
+                                for slotName, slotData in pairs(game:GetService("ReplicatedStorage").Remotes.GetPlayerData:InvokeServer().Slots) do
+                                    if slotData.Value and slotData.Value ~= "" then
+                                        table.insert(UnitTable, {SlotNum = slotName,SlotValue = slotData.Value, Cost = convertToNumber(v2.Frame.Cost.Text)})
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+     
+                table.sort(UnitTable, function(a, b)
+                    return a.Cost < b.Cost
+                end)
+          
+                local positionX, positionZ = -159.369140625, 7.469295501708984
+                repeat task.wait()
+                    local AllPlace = false
+                    for _, data in ipairs(UnitTable) do
+                        
+                        local positionplace = CFrame.new(positionX, 197.93942260742188, positionZ)
+                            
+                        if not workspace.Towers:FindFirstChild(tostring(data.SlotValue)) and tonumber(game:GetService("Players").LocalPlayer.Cash.Value) >= tonumber(data.Cost) then
+                            
+                            repeat task.wait()
+                                replicatedStorage.Remotes.PlaceTower:FireServer(tostring(data.SlotValue), positionplace)
+                                print("Placed Unit :", data.SlotValue, "at", positionplace)
+                                task.wait(1)
+                            until workspace.Towers:FindFirstChild(tostring(data.SlotValue))
+
+                            positionX = positionX - 4
+
+                        end
+
+                    end
+                until playerGui:FindFirstChild("EndGameUI")
+
+                repeat task.wait() until playerGui:FindFirstChild("EndGameUI")
+
+                local endGameUI = playerGui:FindFirstChild("EndGameUI")
+                
+                if endGameUI or replicatedStorage.GameEnded.Value then
+                    local MapData = game:GetService("ReplicatedStorage").Remotes.GetTeleportData:InvokeServer()
+                    local RoomAct = ""
+
+                    local PlayerData = game:GetService("ReplicatedStorage").Remotes.GetPlayerData:InvokeServer()
+                    local InventoryData = PlayerData.ItemData
+                    local ItemName,ItemAmount = nil
+
+                    local level = AddComma(tonumber(HttpService:JSONEncode(PlayerData.Level)))
+                    local xp = AddComma(tonumber(HttpService:JSONEncode(PlayerData.EXP)))
+                    local maxXP = AddComma(tonumber(HttpService:JSONEncode(PlayerData.MaxEXP)))
+
+                    local rerollData = tonumber(HttpService:JSONEncode(PlayerData.Rerolls))
+
+                    local JewelData = AddComma(tonumber(HttpService:JSONEncode(PlayerData.Jewels)))
+                    local EmeraldsData = AddComma(tonumber(HttpService:JSONEncode(PlayerData.Emeralds)))
+                    local GoldDataShow = AddComma(tonumber(HttpService:JSONEncode(PlayerData.Gold)))
+                    local RerollDataShow = AddComma(tonumber(HttpService:JSONEncode(PlayerData.Rerolls)))
+
+                    local ShowItemAmount = ""
+                    local rewardsText = ""
+                    local TotalItem = ""
+                    local AllTextSend = ""
+                    for _, reward in ipairs(endGameUI.BG.Container.Rewards.Holder:GetChildren()) do
+                        if reward:IsA("TextButton") then
+                            local amount = tonumber(reward.Amount.Text:match("%d+")) or 0
+
+                            for _, item in pairs(InventoryData) do
+                                if string.lower(reward.ItemName.Text) == string.lower(item.ItemName) then
+                                    ShowItemAmount = ShowItemAmount.."+"..amount.." " .. reward.ItemName.Text .. " [Total: " .. tonumber(item.Amount) .. "]\n"
+                                end
+                            end
+
+                            if reward.ItemName.Text == "Technique Shard" then
+                                rewardsText = rewardsText .. "+".. amount.. " " .. reward.ItemName.Text:gsub("Technique Shard", "Rerolls") .." [ Total: " ..RerollDataShow .." ]\n"
+                            end
+
+                            if rewardsText == "" then
+                                AllTextSend = ShowItemAmount
+                            else
+                                AllTextSend = rewardsText..ShowItemAmount
+                            end
+
+                        end
+                    end
+                    local UnitText = ""
+                    for slotName, slotData in pairs(PlayerData.Slots) do
+                        local kills = slotData.Kills or 0
+                        local level = slotData.Level or 1
+                        local value = slotData.Value or ""
+                        local cash = slotData.Cash or 0
+                
+                        if value ~= "" then
+                            UnitText = UnitText .. string.format( "[ %d ] %s = %s :crossed_swords:\n", level, value, AddComma(tonumber(kills)) )
+                        end                
+                    end
+
+                    if MapData.Room ~= nil then
+                        RoomAct = " Room "..HttpService:JSONEncode(MapData.Room)
+                    elseif MapData.MapNum ~= nil then
+                        RoomAct = " Act "..HttpService:JSONEncode(MapData.MapNum)
+                    elseif MapData.Element ~= nil then
+                        RoomAct = " Element "..HttpService:JSONEncode(MapData.Element)
+                    else
+                        RoomAct = ""
+                    end
+                    
+                    ColorWL = 00000
+                    WinLoss = ""
+                    if game:GetService("Players").LocalPlayer.PlayerGui.EndGameUI.BG.Container.Stats.Result.TextColor3 == Color3.new(153/255, 255/255, 75/255) then
+                        ColorWL = 65280
+                        WinLoss = "VICTORY"
+                    else
+                        ColorWL = 16711680
+                        WinLoss = "DEFEAT"
+                    end
+                    
+                    local embed = {
+                        title = "Reroll Farm",
+                        color = tonumber(ColorWL),
+                        fields = {
+                            { 
+                                name = "", 
+                                value = "**User : **".."||" .. player.Name .. "||".."\n".."**Level: **".. level.." ["..xp.."/"..maxXP.."]"
+                            },
+                            { 
+                                name = "Player Stats",
+                                value = "<:emerald:1204766658397343805> "..EmeraldsData.."\n<:als_jewels:1265957290251522089> "..JewelData.."\n<:coinals:1322519939525120072> "..GoldDataShow.."\n<:rerolls:1216376860804382860> "..RerollDataShow,
+                                inline = true
+                            },
+                            { 
+                                name = "", 
+                                value = "",
+                                inline = true 
+                            },
+                            { 
+                                name = "Reward",
+                                value = AllTextSend,
+                                inline = true
+                            },
+                            { 
+                                name = "Units", 
+                                value = UnitText, 
+                            },
+                            { 
+                                name = "Match Result", 
+                                value = getSessionTime().." -  Wave "..tostring(tonumber(game:GetService("ReplicatedStorage").Wave.Value)).." \n"..HttpService:JSONEncode(MapData.Type):gsub('"',"").." "..HttpService:JSONEncode(MapData.MapName):gsub('"',"")..RoomAct.." ["..HttpService:JSONEncode(MapData.Difficulty):gsub('"',"").."] ".." - "..WinLoss, 
+                            }
+                        },
+                        thumbnail = {
+                            url = "https://cdn.discordapp.com/attachments/1287980533162315808/1321789124470116383/latest.png?ex=676e838c&is=676d320c&hm=be9b5f0f61f2165f1e9fe8d656d445afe0892c430666d2555fb3bd43e73b7692&"
+                        },
+                        footer = {text = "Local Time".." : ".. currentTime}
+                    }
+                    SendMessageEMBED(url, embed)
+                    task.wait(.5)
+                    repeat game:GetService("TeleportService"):Teleport(12886143095, player) task.wait(.1) until inLobby
+                
+                end         
+            end
+        end)
+
+        if not success then
+            warn("Error occurred: " .. tostring(err))
+        end
+    end
+end)
+
+repeat task.wait() until game.CoreGui:FindFirstChild("RobloxPromptGui")
+local ErrorCode = ""
+game.CoreGui.RobloxPromptGui.promptOverlay.ChildAdded:Connect(function(child)
+    if child.Name == "ErrorPrompt" then
+        task.wait(.5)
+
+        local errorPrompt = game.CoreGui.RobloxPromptGui.promptOverlay:WaitForChild("ErrorPrompt").MessageArea.ErrorFrame
+        for _, v in ipairs(errorPrompt:GetChildren()) do
+            if v.ClassName == "TextLabel" then
+                ErrorCode = v.Text
+            end
+        end
+
+        if errorPrompt then
+            local embed = {
+                title = "Disconnect From Server",
+                color = 00000,
+                fields = {{
+                    name = "||" .. player.Name .. "||",
+                    value = ErrorCode
+                }},
+                footer = {text = "Rejoining"}
+            }
+            SendMessageEMBED(url, embed)
+        else
+            print("ErrorPrompt not found.")
+        end
+
+        repeat game:GetService("TeleportService"):Teleport(12886143095, player) task.wait(2) until false
+
+    end
+end)
