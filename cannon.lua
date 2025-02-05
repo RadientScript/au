@@ -1,8 +1,19 @@
-repeat task.wait() until game:IsLoaded()
+local inLobby = game.PlaceId == 12886143095 or game.PlaceId == 18583778121
 
 local function isTargetMessage(text)
     return text:find("The Colossal Titan is about to stun/destroy several units!")
 end
+
+task.spawn(function()
+    while task.wait() do
+        if inLobby then
+            repeat task.wait()
+                game:GetService("ReplicatedStorage").Remotes.Snej.StartBossRush:FireServer("The Wall")
+                task.wait(.5)
+            until not inLobby
+        end
+    end
+end)
 
 game:GetService("Players").LocalPlayer.PlayerGui.DescendantAdded:Connect(function(descendant)
     if descendant:IsA("TextLabel") and isTargetMessage(descendant.Text) then
