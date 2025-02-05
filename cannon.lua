@@ -1,3 +1,5 @@
+repeat task.wait() until game:IsLoaded()
+
 local function isTargetMessage(text)
     return text:find("The Colossal Titan is about to stun/destroy several units!")
 end
