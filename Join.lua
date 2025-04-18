@@ -1,5 +1,6 @@
 local inLobby = game.PlaceId == 12886143095 or game.PlaceId == 18583778121
 local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait();local humanoid = character:FindFirstChildOfClass("Humanoid");local rootPart = character:WaitForChild("HumanoidRootPart")
+local targetName = "bohqlw"
 
 repeat
     foundPlayer = game:GetService("Players"):FindFirstChild(targetName) 
