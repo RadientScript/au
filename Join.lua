@@ -1,6 +1,18 @@
 local inLobby = game.PlaceId == 12886143095 or game.PlaceId == 18583778121
 local character = game.Players.LocalPlayer.Character or game.Players.LocalPlayer.CharacterAdded:Wait();local humanoid = character:FindFirstChildOfClass("Humanoid");local rootPart = character:WaitForChild("HumanoidRootPart")
 
+repeat
+    foundPlayer = game:GetService("Players"):FindFirstChild(targetName) 
+    if inLobby then
+        writefile(tostring(game.Players.LocalPlayer.UserId).."JobId.txt",game.JobId)
+        local MainJobId = readfile("5654706557JobId.txt")
+        if MainJobId ~= game.JobId then
+            game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, MainJobId)
+        end
+    end
+    task.wait(1) 
+until foundPlayer
+
 repeat task.wait()
     if game.Players.LocalPlayer.UserId == 5654706557 then
         for i,v in pairs(workspace.TeleporterFolder.Story:GetChildren()) do
