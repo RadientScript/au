@@ -1,2 +1,1 @@
-local url;
 print(url)
