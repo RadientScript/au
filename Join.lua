@@ -23,7 +23,7 @@ while matchCounter < getgenv().Main["Attempts"] do
 
     if currentState and not previousState then
         matchCounter = matchCounter + 1
-        print("Game ended! Count :", matchCounter);s(getgenv().Main["WebhookURL"], matchCounter .. " matches played.");game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Restart Working!!",Text = tostring(matchCounter).." matches",Duration = 9e9})
+        print("Game ended! Count :", matchCounter);s(getgenv().Main["WebhookURL"], matchCounter .. " matches played.");game:GetService("StarterGui"):SetCore("SendNotification", {Title = getgenv().Main["Mode"].." Working!!",Text = tostring(matchCounter).." matches",Duration = 9e9})
     end
 
     previousState = currentState
