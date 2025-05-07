@@ -17,7 +17,7 @@ local function GameEnded()
 end
 
 print("Waiting for ".. getgenv().Main["Attempts"] .." matches...");s(getgenv().Main["WebhookURL"], "Join Wait ".. getgenv().Main["Attempts"] .." match.")
-game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Start Count Restart",Text = "Restart Working!!",Duration = 9e9})
+game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Start Count "..getgenv().Main["Mode"],Text = "Working!!",Duration = 9e9})
 while matchCounter < getgenv().Main["Attempts"] do
     local currentState = GameEnded()
 
