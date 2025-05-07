@@ -11,6 +11,7 @@ local function GameEnded()
     return game.Players.LocalPlayer.PlayerGui:FindFirstChild("EndGameUI") ~= nil
 end
 
+print("Version 1.0.0")
 print("Waiting for ".. getgenv().Match .." matches...");s(getgenv().WebhookURL, "Join Wait ".. getgenv().Match .." match.")
 game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Start Count Restart",Text = "Restart Working!!",Duration = 9e9})
 while matchCounter < getgenv().Match do
