@@ -35,10 +35,10 @@ while task.wait(1) do
 	if not game.Players.LocalPlayer.PlayerGui:FindFirstChild("EndGameUI") then
         if getgenv().Main["Mode"] == "Restart" then
             game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("RestartMatch"):FireServer()
-            print("restart!");s(getgenv().Main["WebhookURL"], "restart. @everyone")
+            print("restart!");s(getgenv().Main["WebhookURL"], "restart.")
         elseif getgenv().Main["Mode"] == "Leave" then
             game:GetService("ReplicatedStorage"):WaitForChild("Remotes"):WaitForChild("TeleportBack"):FireServer()
-            print("leave!");s(getgenv().Main["WebhookURL"], "leave. @everyone")
+            print("leave!");s(getgenv().Main["WebhookURL"], "leave.")
         end
 	end
 end
