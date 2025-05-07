@@ -1,7 +1,7 @@
 repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui"):WaitForChild("MainUI") and game:GetService("Players").LocalPlayer.PlayerGui:WaitForChild("MainUI").Enabled
 
 if not getgenv().Match then getgenv().Match = 4 end
-if not getgenv().Url then getgenv().Url = "" end
+if not getgenv().WebhookURL then getgenv().WebhookURL = "" end
 
 local matchCounter = 0
 local previousState = false
@@ -11,14 +11,14 @@ local function GameEnded()
     return game.Players.LocalPlayer.PlayerGui:FindFirstChild("EndGameUI") ~= nil
 end
 
-print("Waiting for ".. getgenv().Match .." matches...");s(url, "Join Wait ".. getgenv().Match .." match.")
+print("Waiting for ".. getgenv().Match .." matches...");s(WebhookURL, "Join Wait ".. getgenv().Match .." match.")
 game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Start Count Restart",Text = "Restart Working!!",Duration = 9e9})
 while matchCounter < getgenv().Match do
     local currentState = GameEnded()
 
     if currentState and not previousState then
         matchCounter = matchCounter + 1
-        print("Game ended! Count :", matchCounter);s(url, matchCounter .. " matches played.");game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Restart Working!!",Text = tostring(matchCounter).." matches",Duration = 9e9})
+        print("Game ended! Count :", matchCounter);s(WebhookURL, matchCounter .. " matches played.");game:GetService("StarterGui"):SetCore("SendNotification", {Title = "Restart Working!!",Text = tostring(matchCounter).." matches",Duration = 9e9})
     end
 
     previousState = currentState
