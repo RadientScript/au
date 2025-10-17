@@ -1,15 +1,15 @@
+repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer:FindFirstChild("ActiveQuests")
+
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TeleportService = game:GetService("TeleportService")
-local LocalPlayer = game:GetService("Players").LocalPlayer
-local ActiveQuests = LocalPlayer.ActiveQuests
 
 local function Rejoin()
     print("Money value stagnant for 5 seconds. Rejoining server...")
-    TeleportService:Teleport(game.PlaceId, LocalPlayer)
+    TeleportService:Teleport(game.PlaceId, game:GetService("Players").LocalPlayer)
 end
 
 local function getMoneyValue()
-    local moneyValueObject = LocalPlayer.PlayerGui.ScreenGui.Money.MoneyValue -- <--- Check this path
+    local moneyValueObject = game:GetService("Players").LocalPlayer.PlayerGui.ScreenGui.Money.MoneyValue
     
     if moneyValueObject and moneyValueObject.Value then
         return tonumber(moneyValueObject.Value)
@@ -55,7 +55,7 @@ end)
 --------------------------------
 
 pcall(function()
-    local activeQuestName = ActiveQuests:FindFirstChildOfClass("StringValue")
+    local activeQuestName = game:GetService("Players").LocalPlayer.ActiveQuests:FindFirstChildOfClass("StringValue")
     if activeQuestName then
         local questName = activeQuestName.Name
         ReplicatedStorage.Quests.Contracts.CancelContract:InvokeServer(questName)
@@ -65,10 +65,10 @@ end)
 
 -- Main farming loop
 while task.wait() do
-    if not ActiveQuests:FindFirstChild("contractBuildMaterial") then
+    if not game:GetService("Players").LocalPlayer.ActiveQuests:FindFirstChild("contractBuildMaterial") then
         ReplicatedStorage.Quests.Contracts.StartContract:InvokeServer("contractBuildMaterial")
         
-        repeat task.wait() until ActiveQuests:FindFirstChild("contractBuildMaterial")
+        repeat task.wait() until game:GetService("Players").LocalPlayer.ActiveQuests:FindFirstChild("contractBuildMaterial")
     end
 
     repeat task.wait()
@@ -77,7 +77,7 @@ while task.wait() do
             ReplicatedStorage.Quests.DeliveryComplete:InvokeServer("contractMaterial")
             ReplicatedStorage.Quests.DeliveryComplete:InvokeServer("contractMaterial")
         end)
-    until ActiveQuests.contractBuildMaterial.Value == "!pw5pi3ps2" -- Wait until the contract status is complete
+    until game:GetService("Players").LocalPlayer.ActiveQuests.contractBuildMaterial.Value == "!pw5pi3ps2"
 
     ReplicatedStorage.Quests.Contracts.CompleteContract:InvokeServer()
 end
