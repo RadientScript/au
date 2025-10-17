@@ -1,11 +1,10 @@
 repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer:FindFirstChild("ActiveQuests")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TeleportService = game:GetService("TeleportService")
 
 local function Rejoin()
     print("Money value stagnant for 5 seconds. Rejoining server...")
-    TeleportService:Teleport(game.PlaceId, game:GetService("Players").LocalPlayer)
+    game:GetService("TeleportService"):Teleport(game.PlaceId, game:GetService("Players").LocalPlayer)
 end
 
 local function getMoneyValue()
