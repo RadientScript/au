@@ -1,4 +1,4 @@
-repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer:FindFirstChild("ActiveQuests")
+repeat task.wait() until game:IsLoaded() and game:GetService("Players").LocalPlayer:FindFirstChild("PlayerGui") and game:GetService("Players").LocalPlayer:FindFirstChild("ActiveQuests")
 
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
